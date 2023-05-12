@@ -1,6 +1,7 @@
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import { firestore } from "../main";
+import { useNavigate } from "react-router-dom";
 
 
 const Input = () => {
@@ -10,6 +11,8 @@ const Input = () => {
 `for (int i = 0; i < 10; i++) {
     print(i)
 }`
+
+    const navigate = useNavigate();
 
     const shuffle = (rows: string[]): string[] => {
         let currentIndex = rows.length, randomIndex;
@@ -26,18 +29,17 @@ const Input = () => {
     }
 
     const handleShuffle = async () => {
-        const rows = code.split('\n');
+        const rows = shuffle(code.split('\n'));
 
         try {
             const docRef = await addDoc(collection(firestore, 'parsonItems'), {
                 rows: rows
             });
-            console.log('Document written with ID: ', docRef.id);
+            navigate('/'+docRef.id);
         } catch (error) {
             console.error('Error adding document: ', error);
         }
     }
-
 
     return (
         <div>
