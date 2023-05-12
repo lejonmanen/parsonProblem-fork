@@ -1,4 +1,6 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
+import { firestore } from "../main";
 
 interface InputProps {
     nextScreen: () => void;
@@ -12,6 +14,34 @@ const Input: React.FC<InputProps> = ({ nextScreen }) => {
     print(i)
 }`
 
+    const shuffle = (rows: string[]) : string[]  =>  {
+        let currentIndex = rows.length, randomIndex;
+
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [rows[currentIndex], rows[randomIndex]] = [
+                rows[randomIndex], rows[currentIndex]
+            ];
+        }
+
+        return rows;
+    }
+
+    const handleShuffle = async () => {
+        const rows = code.split('\n');
+
+        try {
+            const docRef = await addDoc(collection(firestore, 'parsonItems'), {
+              rows: rows
+            });
+            console.log('Document written with ID: ', docRef.id);
+          } catch (error) {
+            console.error('Error adding document: ', error);
+          }
+    }
+
+
     return (
         <div>
             <textarea
@@ -21,7 +51,7 @@ const Input: React.FC<InputProps> = ({ nextScreen }) => {
                 onChange={event => setCode(event.target.value)}
                 placeholder={placeHolder}
             /><br />
-            <button onClick={nextScreen}>Shuffle</button>
+            <button onClick={handleShuffle}>Shuffle</button>
         </div>
     )
 }
