@@ -54,7 +54,9 @@ const Parson = () => {
         setDraggedItem(null);
     };
 
-    const listElements = list.map((item, index) => (
+    const indentedList = indentList(list);
+
+    const listElements = indentedList.map((item, index) => (
         <li
             key={item.id}
             draggable
@@ -71,12 +73,35 @@ const Parson = () => {
 
     return (
         <>
-            <ul style={{ listStyleType: 'none', textAlign: 'left' }}>
+            <ul style={{ listStyleType: 'none', textAlign: 'left', whiteSpace: 'pre' }}> 
                 {listElements}
             </ul>
-            <button >Back</button>
         </>
     );
+}
+
+const indentList = (items: ListItem[]): ListItem[] => {
+    const indentation = '    '; // Define the desired indentation
+    const trimmedItems = items.map((item) => ({ ...item, text: item.text.trim() }));
+    let indentLevel = 0; // Track the current indentation level
+
+    for (let i = 0; i < trimmedItems.length; i++) {
+        const currentText = trimmedItems[i].text;
+        const isClosingBrace = currentText.endsWith('}');
+        const isStartingBrace = currentText.endsWith('{');
+
+        if (isClosingBrace && indentLevel > 0) {
+            indentLevel--;
+        }
+
+        trimmedItems[i].text = indentation.repeat(indentLevel) + currentText;
+        
+        if (isStartingBrace) {
+            indentLevel++;
+        }
+    }
+
+    return trimmedItems;
 }
 
 
