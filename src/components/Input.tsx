@@ -40,8 +40,10 @@ const Input = () => {
 
 const writeToFirestore = async (rows : string[]) : Promise<string | null> => {
     try {
+        const time = Date();
         const docRef = await addDoc(collection(firestore, 'parsonItems'), {
-            rows: rows
+            rows: rows,
+            date: time
         });
         return docRef.id;
     } catch (error) {
