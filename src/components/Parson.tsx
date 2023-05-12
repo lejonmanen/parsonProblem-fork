@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { firestore } from "../main";
 import { doc, getDoc } from "firebase/firestore";
+import "./parson.css";
 
 
 interface ListItem {
@@ -72,12 +73,10 @@ const Parson = () => {
     ))
 
     return (
-        <>
-            <ul style={{ listStyleType: 'none', textAlign: 'left', whiteSpace: 'pre' }}> 
-                {listElements}
-            </ul>
-        </>
-    );
+        <div className="parson-container">
+          <ul className="parson-list">{listElements}</ul>
+        </div>
+      );
 }
 
 const indentList = (items: ListItem[]): ListItem[] => {
