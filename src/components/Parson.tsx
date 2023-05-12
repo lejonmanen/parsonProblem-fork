@@ -4,7 +4,6 @@ import { firestore } from "../main";
 import { doc, getDoc } from "firebase/firestore";
 import "./parson.css";
 
-
 interface ListItem {
     id: number;
     text: string;
@@ -103,7 +102,6 @@ const indentList = (items: ListItem[]): ListItem[] => {
     return trimmedItems;
 }
 
-
 const getRows = async (id: string): Promise<string[]> => {
     try {
 
@@ -123,6 +121,4 @@ const getRows = async (id: string): Promise<string[]> => {
     return [];
 }
 
-
 export default Parson;
-
