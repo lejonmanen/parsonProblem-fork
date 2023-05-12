@@ -2,19 +2,16 @@ import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import { firestore } from "../main";
 
-interface InputProps {
-    nextScreen: () => void;
-}
 
-const Input: React.FC<InputProps> = ({ nextScreen }) => {
+const Input = () => {
     const [code, setCode] = useState('');
 
     const placeHolder =
-        `for (int i = 0; i < 10; i++) {
+`for (int i = 0; i < 10; i++) {
     print(i)
 }`
 
-    const shuffle = (rows: string[]) : string[]  =>  {
+    const shuffle = (rows: string[]): string[] => {
         let currentIndex = rows.length, randomIndex;
 
         while (currentIndex != 0) {
@@ -33,12 +30,12 @@ const Input: React.FC<InputProps> = ({ nextScreen }) => {
 
         try {
             const docRef = await addDoc(collection(firestore, 'parsonItems'), {
-              rows: rows
+                rows: rows
             });
             console.log('Document written with ID: ', docRef.id);
-          } catch (error) {
+        } catch (error) {
             console.error('Error adding document: ', error);
-          }
+        }
     }
 
 

@@ -1,18 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { firestore } from "../main";
+import { doc, getDoc } from "firebase/firestore";
 
-
-interface ParsonProps {
-    back: () => void;
-}
 
 interface ListItem {
     id: number;
     text: string;
 }
 
-const Parson: React.FC<ParsonProps> = ({ back }) => {
+const Parson = () => {
     const [draggedItem, setDraggedItem] = useState<ListItem | null>(null);
-    const [list, setList] = useState<ListItem[]>(items);
+    const [list, setList] = useState<ListItem[]>([]);
+
+    const params = useParams()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if ('parsonId' in params) {
+                const rows = await getRows(String(params.parsonId));
+
+                const listItems: ListItem[] = rows.map((row, index) => {
+                    return {
+                        id: index + 1,
+                        text: row,
+                    };
+                });
+
+                setList(listItems);
+            }
+        };
+
+        fetchData();
+    }, [])
 
     const handleDragStart = (event: React.DragEvent<HTMLLIElement>, item: ListItem) => {
         setDraggedItem(item);
@@ -51,77 +71,34 @@ const Parson: React.FC<ParsonProps> = ({ back }) => {
 
     return (
         <>
-            <ul style={{listStyleType : 'none', textAlign : 'left'}}>
+            <ul style={{ listStyleType: 'none', textAlign: 'left' }}>
                 {listElements}
             </ul>
-            <button onClick={back}>Back</button>
+            <button >Back</button>
         </>
     );
 }
 
-const items: ListItem[] = [
-    {
-      id: 1,
-      text: "interface ListItem {",
-    },
-    {
-      id: 2,
-      text: "    id: number;",
-    },
-    {
-      id: 3,
-      text: "    text: string;",
-    },
-    {
-      id: 4,
-      text: "}",
-    },
-    {
-      id: 5,
-      text: "",
-    },
-    {
-      id: 6,
-      text: "const handleDrop = (event: React.DragEvent<HTMLLIElement>, targetIndex: number) => {",
-    },
-    {
-      id: 7,
-      text: "    event.preventDefault();",
-    },
-    {
-      id: 8,
-      text: "    const sourceIndex = list.findIndex(item => item.id === Number(event.dataTransfer.getData('text/plain')));",
-    },
-    {
-      id: 9,
-      text: "    const updatedList = [...list];",
-    },
-    {
-      id: 10,
-      text: "    const [removed] = updatedList.splice(sourceIndex, 1);",
-    },
-    {
-      id: 11,
-      text: "    updatedList.splice(targetIndex, 0, removed);",
-    },
-    {
-      id: 12,
-      text: "    setList(updatedList);",
-    },
-    {
-      id: 13,
-      text: "    setDraggedItem(null);",
-    },
-    {
-      id: 14,
-      text: "    //onDragEnd(updatedList);",
-    },
-    {
-      id: 15,
-      text: "};",
-    },
-  ];
-  
+
+const getRows = async (id: string): Promise<string[]> => {
+    try {
+
+        const docRef = doc(firestore, "parsonItems", id);
+        const document = await getDoc(docRef);
+
+        if (document.exists()) {
+            const data = document.data();
+            const rows: string[] = data.rows;
+            return rows;
+        } else {
+            console.log('Document not found.');
+        }
+    } catch (error) {
+        console.error('Error fetching document:', error);
+    }
+    return [];
+}
+
 
 export default Parson;
 
