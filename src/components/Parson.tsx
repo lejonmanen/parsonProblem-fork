@@ -15,13 +15,14 @@ interface ListItem {
 const Parson = () => {
     const [draggedItem, setDraggedItem] = useState<ListItem | null>(null);
     const [list, setList] = useState<ListItem[]>([]);
+    const [selectedLanguage, setSelectedLanguage] = useState<string>('');
 
     const params = useParams()
 
     useEffect(() => {
         const fetchData = async () => {
             if ('parsonId' in params) {
-                const rows = await getRows(String(params.parsonId));
+                const {rows, language } = await getRows(String(params.parsonId));
 
                 const listItems: ListItem[] = rows.map((row, index) => {
                     return {
@@ -31,6 +32,7 @@ const Parson = () => {
                 });
 
                 setList(listItems);
+                setSelectedLanguage(language);
             }
         };
 
@@ -70,7 +72,7 @@ const Parson = () => {
                 opacity: draggedItem && draggedItem.id === item.id ? 0.5 : 1,
             }}
         >
-            <Highlight className='javascript'>
+            <Highlight className={selectedLanguage}>
                 {item.text}
             </Highlight>
         </li>
@@ -107,7 +109,7 @@ const indentList = (items: ListItem[]): ListItem[] => {
     return trimmedItems;
 }
 
-const getRows = async (id: string): Promise<string[]> => {
+const getRows = async (id: string): Promise<{ rows: string[], language: string }> => {
     try {
 
         const docRef = doc(firestore, "parsonItems", id);
@@ -116,14 +118,15 @@ const getRows = async (id: string): Promise<string[]> => {
         if (document.exists()) {
             const data = document.data();
             const rows: string[] = data.rows;
-            return rows;
+            const language : string = data.language;
+            return { rows, language };
         } else {
             console.log('Document not found.');
         }
     } catch (error) {
         console.error('Error fetching document:', error);
     }
-    return [];
+    return { rows: [], language: '' };
 }
 
 export default Parson;
