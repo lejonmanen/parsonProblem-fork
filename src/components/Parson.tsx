@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { firestore } from "../main";
 import { doc, getDoc } from "firebase/firestore";
+import Highlight from 'react-highlight';
+import "highlight.js/styles/default.css";
+
 import "./parson.css";
 
 interface ListItem {
@@ -67,7 +70,9 @@ const Parson = () => {
                 opacity: draggedItem && draggedItem.id === item.id ? 0.5 : 1,
             }}
         >
-            {item.text}
+            <Highlight className='javascript'>
+                {item.text}
+            </Highlight>
         </li>
     ))
 
