@@ -15,6 +15,10 @@ interface ListItem {
 const Parson = () => {
     const [draggedItem, setDraggedItem] = useState<ListItem | null>(null);
     const [list, setList] = useState<ListItem[]>([]);
+    const [shuffledList, setShuffledList] = useState<ListItem[]>([]);
+    const [comparisonResult, setComparisonResult] = useState<string>('');
+
+
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
 
     const params = useParams()
@@ -22,7 +26,7 @@ const Parson = () => {
     useEffect(() => {
         const fetchData = async () => {
             if ('parsonId' in params) {
-                const {rows, language } = await getRows(String(params.parsonId));
+                const { rows, language } = await getRows(String(params.parsonId));
 
                 const listItems: ListItem[] = rows.map((row, index) => {
                     return {
@@ -31,7 +35,9 @@ const Parson = () => {
                     };
                 });
 
+
                 setList(listItems);
+                setShuffledList(shuffle(listItems));
                 setSelectedLanguage(language);
             }
         };
@@ -51,15 +57,15 @@ const Parson = () => {
 
     const handleDrop = (event: React.DragEvent<HTMLLIElement>, targetIndex: number) => {
         event.preventDefault();
-        const sourceIndex = list.findIndex(item => item.id === Number(event.dataTransfer.getData('text/plain')));
-        const updatedList = [...list];
+        const sourceIndex = shuffledList.findIndex(item => item.id === Number(event.dataTransfer.getData('text/plain')));
+        const updatedList = [...shuffledList];
         const [removed] = updatedList.splice(sourceIndex, 1);
         updatedList.splice(targetIndex, 0, removed);
-        setList(updatedList);
+        setShuffledList(updatedList);
         setDraggedItem(null);
     };
 
-    const indentedList = indentList(list);
+    const indentedList = indentList(shuffledList);
 
     const listElements = indentedList.map((item, index) => (
         <li
@@ -78,11 +84,29 @@ const Parson = () => {
         </li>
     ))
 
+    const compareLists = () => {
+        let result = "All items match";
+    
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].text.trim() !== shuffledList[i].text.trim()) {
+            result = `Lists differ at position ${i + 1}`;
+            break;
+          }
+        }
+    
+        setComparisonResult(result);
+      };
+    
+
     return (
         <div className="parson-container">
-          <ul className="parson-list">{listElements}</ul>
+            <ul className="parson-list">{listElements}</ul>
+            <button onClick={compareLists}>Check Result</button>
+            {comparisonResult && (
+                <div className="comparison-result">{comparisonResult}</div>
+            )}
         </div>
-      );
+    );
 }
 
 const indentList = (items: ListItem[]): ListItem[] => {
@@ -100,7 +124,7 @@ const indentList = (items: ListItem[]): ListItem[] => {
         }
 
         trimmedItems[i].text = indentation.repeat(indentLevel) + currentText;
-        
+
         if (isStartingBrace) {
             indentLevel++;
         }
@@ -118,7 +142,7 @@ const getRows = async (id: string): Promise<{ rows: string[], language: string }
         if (document.exists()) {
             const data = document.data();
             const rows: string[] = data.rows;
-            const language : string = data.language;
+            const language: string = data.language;
             return { rows, language };
         } else {
             console.log('Document not found.');
@@ -127,6 +151,22 @@ const getRows = async (id: string): Promise<{ rows: string[], language: string }
         console.error('Error fetching document:', error);
     }
     return { rows: [], language: '' };
+}
+
+const shuffle = (listItems: ListItem[]): ListItem[] => {
+    const shuffledListItems = [...listItems];
+
+    let currentIndex = shuffledListItems.length, randomIndex;
+
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [shuffledListItems[currentIndex], shuffledListItems[randomIndex]] = [
+            shuffledListItems[randomIndex], shuffledListItems[currentIndex]
+        ];
+    }
+
+    return shuffledListItems;
 }
 
 export default Parson;

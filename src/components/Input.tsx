@@ -4,9 +4,15 @@ import { firestore } from "../main";
 import { useNavigate } from "react-router-dom";
 
 const PLACEHOLDER_CODE = "paste your code here"
-// `for (int i = 0; i < 10; i++) {
-//     print(i)
-// }`
+
+const languageOptions = [
+    { value: "javascript", label: "JavaScript" },
+    { value: "swift", label: "Swift" },
+    { value: "kotlin", label: "Kotlin" },
+    { value: "python", label: "Python" },
+    { value: "java", label: "Java" },
+    { value: "c#", label: "C#" },
+  ];
 
 const Input = () => {
     const [code, setCode] = useState('');
@@ -14,9 +20,7 @@ const Input = () => {
     const navigate = useNavigate();
 
     const handleShuffle = async () => {
-        let rows = shuffle(code.split('\n'));
-
-        rows = trimLines(rows);
+        let rows = trimLines(code.split('\n'));
         
         const id = await writeToFirestore(rows, selectedLanguage);
 
@@ -62,36 +66,9 @@ const writeToFirestore = async (rows : string[], selectedLanguage : string) : Pr
     return null;
 }
 
-const trimLines = (rows : string[] ): string[] => {
-    for (let i = 0; i < rows.length; i++) {
-        rows[i] = rows[i].trimStart();
-    }
-
-    return rows;
+const trimLines = (rows: string[]): string[] => {
+    const nonEmptyRows = rows.filter((row) => row.trim() !== "");
+    return nonEmptyRows;
 }
-
-const shuffle = (rows: string[]): string[] => {
-    let currentIndex = rows.length, randomIndex;
-
-    while (currentIndex != 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        [rows[currentIndex], rows[randomIndex]] = [
-            rows[randomIndex], rows[currentIndex]
-        ];
-    }
-
-    return rows;
-}
-
-const languageOptions = [
-    { value: "javascript", label: "JavaScript" },
-    { value: "swift", label: "Swift" },
-    { value: "kotlin", label: "Kotlin" },
-    { value: "python", label: "Python" },
-    { value: "java", label: "Java" },
-    { value: "c#", label: "C#" },
-  ];
-
 
 export default Input;
