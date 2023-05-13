@@ -85,11 +85,11 @@ const Parson = () => {
     ))
 
     const compareLists = () => {
-        let result = "All items match";
+        let result = "Correct!";
     
         for (let i = 0; i < list.length; i++) {
           if (list[i].text.trim() !== shuffledList[i].text.trim()) {
-            result = `Lists differ at position ${i + 1}`;
+            result = `Error at line ${i + 1}`;
             break;
           }
         }
@@ -110,9 +110,9 @@ const Parson = () => {
 }
 
 const indentList = (items: ListItem[]): ListItem[] => {
-    const indentation = '    '; // Define the desired indentation
+    const indentation = '    '; // desired indentation
     const trimmedItems = items.map((item) => ({ ...item, text: item.text.trim() }));
-    let indentLevel = 0; // Track the current indentation level
+    let indentLevel = 0; 
 
     for (let i = 0; i < trimmedItems.length; i++) {
         const currentText = trimmedItems[i].text;
