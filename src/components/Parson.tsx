@@ -101,7 +101,7 @@ const Parson = () => {
     return (
         <div className="parson-container">
             <ul className="parson-list">{listElements}</ul>
-            <button onClick={compareLists}>Check Result</button>
+            <button className="check-button" onClick={compareLists}>Check Result</button>
             {comparisonResult && (
                 <div className="comparison-result">{comparisonResult}</div>
             )}

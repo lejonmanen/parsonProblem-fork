@@ -46,7 +46,7 @@ const Input = () => {
           <option key={option.value} value={option.value}>{option.label}</option>
         ))}
       </select><br />
-            <button onClick={handleShuffle}>Shuffle</button>
+            <button className="shuffle-button" onClick={handleShuffle}>Shuffle</button>
         </div>
     )
 }
