@@ -14,21 +14,27 @@
 }
 
 .parson-list li {
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  text-align: left;
-  cursor: move;
+  padding: 0.5rem 0rem;
+  margin: 0;
 }
 
-.parson-list li:hover {
+.parson-list li pre:hover {
   background-color: #ebebeb;
 }
 
-.parson-list li:active {
+.parson-list li pre:active {
   background-color: #dcdcdc;
 }
 
-.parson-list li.dragging {
+.parson-list li.dragging pre {
   opacity: 0.5;
+}
+
+.parson-list pre {
+	background-color: #f5f5f5;
+	border-radius: 4px;
+	margin-top: 0rem;
+	margin-bottom: 0rem;
+	text-align: left;
+	cursor: move;
 }
